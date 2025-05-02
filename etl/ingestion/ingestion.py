@@ -1,12 +1,16 @@
-# This code will extract Fire Incidents from API endpoint and write in storage>bronze>raw_api as JSON file
+"""
+Extracts Fire Incidents from public API and stores the data as JSON files
+in the storage/bronze/raw_api folder.
+"""
 
-import requests
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+import requests
 
 ENDPOINT = 'https://data.sfgov.org/resource/wr8u-xric.json'
-OUTPUT_SUBDIR = 'storage/bronze/raw_api'
+OUTPUT_SUBDIR = 'storage/ingestion'
+
 
 def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
     """Fetch data from API and save to JSON file."""
@@ -20,7 +24,7 @@ def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
         print(f"Output directory: {output_dir}")
 
         # Make the request
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers, timeout=10)
         response.raise_for_status()
 
         try:
@@ -50,6 +54,7 @@ def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
 
     except requests.exceptions.RequestException as e:
         print(f"ERROR fetching data from API: {e}")
+
 
 if __name__ == "__main__":
     fetch_api_data(url=ENDPOINT, output_subdir=OUTPUT_SUBDIR)

@@ -28,7 +28,10 @@ RUN pip install --upgrade pip && \
         pandas \
         pyspark==3.4.1 \
         apache-airflow[postgres]==2.7.3 \
-        flask-session==0.4.0
+        flask-session==0.4.0 \
+        pylint==3.3.6 \
+        autopep8==2.3.2 \
+        coverage==7.8.0
 
 # Creates Airflow dir and init
 RUN mkdir -p $AIRFLOW_HOME && airflow db init || true
