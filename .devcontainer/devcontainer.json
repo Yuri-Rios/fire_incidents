@@ -6,15 +6,23 @@
 	"customizations": {
 	  "vscode": {
 		"settings": {
-		  "terminal.integrated.shell.linux": "/bin/bash"
+		  "terminal.integrated.shell.linux": "/bin/bash",
+		  "python.defaultInterpreterPath": "/usr/local/bin/python"
 		},
 		"extensions": [
 		  "ms-python.python"
 		]
 	  }
 	},
-	"postCreateCommand": "airflow db init",
+	"postCreateCommand": "airflow db init && airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin >/dev/null 2>&1 && clear && echo '✅ DevContainer ready!Open a new Terminal (Ctrl+Shift+\\) to start.'",
 	"forwardPorts": [8080],
-	"remoteUser": "root"
+	"remoteUser": "root",
+	"containerEnv": {
+	  "AIRFLOW__CORE__DAGS_FOLDER": "/workspaces/fire_incidents/dags",
+	  "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
+	},
+	"runArgs": ["--init"],
+  
+	"overrideCommand": false
   }
   
