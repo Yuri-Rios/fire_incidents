@@ -55,6 +55,5 @@ def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
     except requests.exceptions.RequestException as e:
         print(f"ERROR fetching data from API: {e}")
 
-
 if __name__ == "__main__":
     fetch_api_data(url=ENDPOINT, output_subdir=OUTPUT_SUBDIR)

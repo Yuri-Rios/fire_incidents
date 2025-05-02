@@ -3,6 +3,7 @@ from unittest.mock import patch, Mock
 from etl.ingestion.ingestion import fetch_api_data
 from pathlib import Path
 import requests
+from unittest.mock import patch, Mock, mock_open
 
 class TestFetchAPIData(unittest.TestCase):
     OUTPUT_SUBDIR = "etl/tests/storage/ingestion"
@@ -53,11 +54,26 @@ class TestFetchAPIData(unittest.TestCase):
     @patch("etl.ingestion.ingestion.requests.get")
     def test_fetch_http_error(self, mock_get):
         mock_get.side_effect = requests.exceptions.RequestException("Network error")
+        
+        # Se a exceção for tratada corretamente, fetch_api_data não deve levantar nada
+        result = fetch_api_data("http://fake.api/fire", output_subdir=self.OUTPUT_SUBDIR)
+        
+        self.assertIsNone(result)
 
-        try:
-            fetch_api_data("http://fake.api/fire", output_subdir=self.OUTPUT_SUBDIR)
-        except Exception as e:
-            self.fail(f"fetch_api_data raised an unexpected exception: {e}")
+    @patch("etl.ingestion.ingestion.requests.get")
+    @patch("builtins.open", new_callable=mock_open)
+    def test_fetch_write_error(self, mock_file, mock_get):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = [{"id": 1, "incident": "fire"}]
+        mock_get.return_value = mock_response
+
+        # Simula erro na escrita do arquivo
+        mock_file.side_effect = OSError("Write error")
+
+        result = fetch_api_data("http://fake.api/fire", output_subdir=self.OUTPUT_SUBDIR)
+
+        self.assertIsNone(result)
 
 if __name__ == "__main__":
     unittest.main()
