@@ -14,19 +14,12 @@ This project uses a Dev Container to automatically set up a development environm
 
 ## 🚀 Getting Started
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo>
-   cd <your-repo>
-   ```
-
-
-2. **Open the project in VS Code and click:**
+1. **Open the project in VS Code and click:**
    ```
    > Reopen in Container
    ```
 
-3. **After build completes:**
+2. **After build completes:**
    - The Airflow database will be initialized.
    - Both the `scheduler` and `webserver` will start automatically.
    - Access the Airflow UI at [http://localhost:8080](http://localhost:8080)
