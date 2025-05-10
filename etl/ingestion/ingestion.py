@@ -1,6 +1,6 @@
 """
-Extracts Fire Incidents from public API and stores the data as JSON files
-in the storage/bronze/raw_api folder.
+Extracts Fire Incidents from public API and stores the data as JSON Lines
+in the storage/ingestion folder.
 """
 
 import json
@@ -13,7 +13,7 @@ OUTPUT_SUBDIR = 'storage/ingestion'
 
 
 def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
-    """Fetch data from API and save to JSON file."""
+    """Fetch data from API and save to JSON Lines file."""
     try:
         print('Start fetching data...')
 
@@ -41,11 +41,13 @@ def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
 
         # Prepare output file path with timestamp
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-        output_path = output_dir / f"fire_incidents_landing_{timestamp}.json"
+        output_path = output_dir / f"fire_incidents_landing_{timestamp}.jsonl"
 
         try:
             with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+                for item in data:
+                    json.dump(item, f, ensure_ascii=False)
+                    f.write("\n")
         except OSError as e:
             print(f"ERROR writing file: {e}")
             return
@@ -54,6 +56,7 @@ def fetch_api_data(url, params=None, headers=None, output_subdir: str = None):
 
     except requests.exceptions.RequestException as e:
         print(f"ERROR fetching data from API: {e}")
+
 
 if __name__ == "__main__":
     fetch_api_data(url=ENDPOINT, output_subdir=OUTPUT_SUBDIR)

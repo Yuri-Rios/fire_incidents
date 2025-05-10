@@ -12,11 +12,13 @@ RUN apt-get update && \
         build-essential \
         libsasl2-dev \
         libffi-dev \
+        postgresql postgresql-contrib \
         libpq-dev && \
     curl -L -o /tmp/openjdk.tar.gz https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.23+9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.23_9.tar.gz && \
     mkdir -p /opt/java/openjdk && \
     tar -xzf /tmp/openjdk.tar.gz -C /opt/java/openjdk --strip-components=1 && \
     rm /tmp/openjdk.tar.gz && \
+    wget https://jdbc.postgresql.org/download/postgresql-42.7.3.jar -P /workspaces/fire_incidents/jars/ && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/opt/java/openjdk
@@ -31,7 +33,8 @@ RUN pip install --upgrade pip && \
         flask-session==0.4.0 \
         pylint==3.3.6 \
         autopep8==2.3.2 \
-        coverage==7.8.0
+        coverage==7.8.0 \
+        psycopg==3.2.7
 
 # Creates Airflow dir and init
 RUN mkdir -p $AIRFLOW_HOME && airflow db init || true

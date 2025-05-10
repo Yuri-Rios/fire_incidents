@@ -7,7 +7,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='run_pyspark_script',
+    dag_id='fire_incidents',
     default_args=default_args,
     schedule_interval=None,
     catchup=False,
@@ -15,6 +15,6 @@ with DAG(
 ) as dag:
 
     run_spark = BashOperator(
-        task_id='run_spark_script',
-        bash_command='python /workspaces/fire_incidents/main.py'
+        task_id='ingestion',
+        bash_command='python /workspaces/fire_incidents/etl/ingestion/warehouse_build.py'
     )
